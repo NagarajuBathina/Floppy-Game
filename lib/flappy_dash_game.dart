@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:first_game/component/dash.dart';
-import 'package:first_game/component/dash_parallax_background.dart';
 import 'package:first_game/component/pipe_pair.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -40,6 +38,8 @@ class FlappyDashWorld extends World
   late Dash _dash;
   late PipePair _lastPipe;
   static const _lastPipeDistance = 400;
+  int _score = 0;
+  late TextComponent _scoreText;
   @override
   Future<void> onLoad() async {
     super.onLoad();
@@ -48,7 +48,10 @@ class FlappyDashWorld extends World
     _generatePipes(fromX: 320);
 
     //camera zoom
-    game.camera.viewfinder.zoom = 1.0;
+    // game.camera.viewfinder.zoom = 1.0;
+
+    game.camera.viewfinder.add(_scoreText = TextComponent(
+        position: Vector2(0, -(game.size.y / 2)), text: _score.toString()));
   }
 
   void _generatePipes({
@@ -77,14 +80,20 @@ class FlappyDashWorld extends World
     _dash.jump();
   }
 
+//space button clicked
   void onSpaceClicked() {
     _dash.jump();
+  }
+
+// increasing score
+  void increaseScore() {
+    _score += 1;
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-
+    _scoreText.text = _score.toString();
     if (_dash.x >= _lastPipe.x) {
       _generatePipes(fromX: _lastPipeDistance.toDouble());
     }

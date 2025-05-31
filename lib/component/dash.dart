@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:first_game/component/hidden_coin.dart';
 import 'package:first_game/component/pipe.dart';
+import 'package:first_game/flappy_dash_game.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-class Dash extends PositionComponent with CollisionCallbacks {
+class Dash extends PositionComponent
+    with CollisionCallbacks, HasGameReference<FlappyDashGame> {
   Dash()
       : super(
             position: Vector2(0, 0),
@@ -33,9 +35,6 @@ class Dash extends PositionComponent with CollisionCallbacks {
   @override
   void update(double dt) {
     super.update(dt);
-    // delto time --> time passed since the last frame
-    // 10 frames per second --> 0.1 -> 100ms
-    // 5 frames per second --> 0.2 -> 200ms
     _velocity += _gravity * dt;
     position += _velocity * dt;
   }
@@ -53,9 +52,8 @@ class Dash extends PositionComponent with CollisionCallbacks {
   @override
   void onCollision(Set<Vector2> points, PositionComponent other) {
     super.onCollision(points, other);
-    print('test print');
     if (other is HiddenCoin) {
-      print('lets increase the coin');
+      game.world.increaseScore();
       other.removeFromParent();
     } else if (other is Pipe) {
       print('GAME IS OVER!!!!');
